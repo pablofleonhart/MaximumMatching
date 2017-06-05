@@ -24,7 +24,7 @@ typedef adjacency_list<vecS,vecS,undirectedS,VertexInformation,EdgeInformation> 
 int main(int argc, char *argv[]) {
   assert(argc == 4);
   unsigned n = atoi(argv[1]);
-  double p = atof(argv[2]);
+  unsigned m = atof(argv[2]);
   char *filename = argv[3];
  
   srand48(time(0));
@@ -35,11 +35,43 @@ int main(int argc, char *argv[]) {
   for(unsigned i=0; i<2*n; i++)
     add_vertex(g);
  
-  for(unsigned i=0; i<n; i++)
+  /*for(unsigned i=0; i<n; i++)
     for(unsigned j=n; j<2*n; j++)
       if (drand48() < p) {
         Edge e = add_edge(i,j,g).first;
+      }*/
+
+  for ( unsigned i = 0; i < m; i++ )
+  {
+    unsigned src = lrand48()%num_vertices(g);
+    unsigned dst = lrand48()%num_vertices(g);
+
+    bool invalid = true;
+    while ( invalid || src == dst )
+    {
+      invalid = false;
+      graph_traits<Graph>::edge_iterator eb, ee;
+      for ( tie(eb, ee)=edges(g); eb != ee; eb++)
+      {
+        if ( source(*eb,g)+1 == src && target(*eb, g)+1 == dst )
+        {
+          invalid = true;
+        }
       }
+
+      if ( invalid )
+      {
+        src = lrand48()%num_vertices(g);
+        dst = lrand48()%num_vertices(g);
+      }      
+    }
+
+    add_edge( src, dst, g ).first;
+  }
+
+  graph_traits<Graph>::edge_iterator eb, ee;
+  for ( tie(eb, ee)=edges(g); eb != ee; eb++)
+    cout << "e " << source(*eb,g)+1 << " " << target(*eb, g)+1 << endl;
  
   // (2) get maximum matching
   edmonds_maximum_cardinality_matching(g, get(&VertexInformation::mate,g));
@@ -55,7 +87,7 @@ int main(int argc, char *argv[]) {
   // (3) print out in DIMACS format
   file << "c Bi-partite graph" << endl << endl;
   file << "p edge " << num_vertices(g) << " " << num_edges(g) << endl;
-  graph_traits<Graph>::edge_iterator eb, ee;
+  //graph_traits<Graph>::edge_iterator eb, ee;
   for ( tie(eb, ee)=edges(g); eb != ee; eb++)
     file << "e " << source(*eb,g)+1 << " " << target(*eb, g)+1 << endl;
 
