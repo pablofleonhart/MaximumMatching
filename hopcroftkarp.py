@@ -145,4 +145,4 @@ class HopcroftKarp:
                         self.matching[path[i+1]] = path[i]
             print "matching:", self.matching
 
-        return self.matching
+        return len( self.matching )/2

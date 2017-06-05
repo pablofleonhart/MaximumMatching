@@ -51,4 +51,4 @@ while not finish:
 
 print dic
 
-print len( HopcroftKarp( dic ).maximumMatching() )/2
+print HopcroftKarp( dic ).maximumMatching()
