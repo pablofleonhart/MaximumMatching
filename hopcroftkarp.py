@@ -9,20 +9,22 @@ class HopcroftKarp:
         self.matching = {}
         self.dfspaths = []
         self.dfsparent = {}
+        self.phases = 0
+        self.paths = 0
 
         self.left = set( graph.keys() )
         self.right = set()
 
-        print "values:", graph.values()
+        #print "values:", graph.values()
         for value in graph.values():
             self.right.update( value )
 
-        print "graph:", graph
-        print "left:", self.left
+        #print "graph:", graph
+        #print "left:", self.left
         for vertex in self.left:
-            print "vertex:", vertex
+            #print "vertex:", vertex
             for neighbour in graph[vertex]:
-                print "neighbour:", neighbour
+                #print "neighbour:", neighbour
                 if neighbour not in graph:
                     graph[neighbour] = set()
                 
@@ -30,20 +32,21 @@ class HopcroftKarp:
 
         self.graph = graph
 
-        print "graph:", self.graph
+        #print "graph:", self.graph
 
     def bfs( self ):
+        self.phases += 1
         layers = []
         layer = set()
         for vertex in self.left:  # for each free vertex in the left vertex set
             if vertex not in self.matching:  # confirms that the vertex is free
                 layer.add( vertex )
 
-        print "layer:", layer
+        #print "layer:", layer
         layers.append( layer )
         visited = set()  # to keep track of the visited vertices
         while True:
-            print "visited:", visited
+            #print "visited:", visited
             # we take the most recent layer in the partitioning on every repeat
             layer = layers[-1]
             newlayer = set()  # new list for subsequent layers
@@ -63,7 +66,7 @@ class HopcroftKarp:
                         if neighbour not in visited and ( vertex in self.matching and neighbour == self.matching[vertex] ):
                             newlayer.add( neighbour )
 
-            print newlayer
+            #print newlayer
             layers.append( newlayer )  # we add the new layer to the set of layers
             # if newlayer is empty, we have to break the BFS while loop....
             if len( newlayer ) == 0:
@@ -86,17 +89,18 @@ class HopcroftKarp:
         :return: True if P is not empty (i.e., the maximal set of vertex-disjoint alternating path of length k)
         and false otherwise.
         """
-        print "index:", index
+        self.paths += 1
+        #print "index:", index
         if index == 0:
             path = [v]
             while self.dfsparent[v] != v:
                 path.append( self.dfsparent[v] )
                 v = self.dfsparent[v]
             self.dfspaths.append( path )
-            print "path:", path
+            #print "path:", path
             return True
 
-        print "adjacentes:", self.graph[v]
+        #print "adjacentes:", self.graph[v]
         for neighbour in self.graph[v]:  # check the neighbours of vertex
             if neighbour in layers[index - 1]:
                 # if neighbour is in left, we are traversing unmatched edges..
@@ -119,7 +123,7 @@ class HopcroftKarp:
                 break
 
             freeVertex = set( [vertex for vertex in layers[-1] if vertex not in self.matching] )
-            print "freeVertex:", freeVertex
+            #print "freeVertex:", freeVertex
 
             # the maximal set of vertex-disjoint augmenting path and parent dictionary
             # has to be cleared each time the while loop runs
@@ -143,6 +147,7 @@ class HopcroftKarp:
                     if i % 2 == 0:
                         self.matching[path[i]] = path[i+1]
                         self.matching[path[i+1]] = path[i]
-            print "matching:", self.matching
+                        
+            print "matching:", len( self.matching )/2
 
         return len( self.matching )/2

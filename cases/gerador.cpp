@@ -63,7 +63,7 @@ int main( int argc, char *argv[] )
 			}
 		}
 
-		cout << i+1 << endl;
+		//cout << i+1 << endl;
 		add_edge( src, dst, g ).first;
 		adj.push_back( make_pair( src, dst ) );
 	}

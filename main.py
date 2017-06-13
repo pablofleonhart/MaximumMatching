@@ -49,6 +49,9 @@ while not finish:
 
 #dic = {"8": {22}, "150": {16}, "100": {30}, "7": {25}, "6": {25, 26, 29}}
 
-print dic
+#print dic
 
-print HopcroftKarp( dic ).maximumMatching()
+hop = HopcroftKarp( dic )
+print hop.maximumMatching()
+print hop.phases - 1
+print hop.paths
