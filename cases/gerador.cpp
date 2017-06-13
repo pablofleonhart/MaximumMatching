@@ -83,17 +83,40 @@ int main( int argc, char *argv[] )
 
 	cout << "The cardinality of a maximum matching is " << card/2 << "." << endl;
 
-	ofstream file;
-	file.open( filename );
+	ofstream file, file2;
+	char f1[20], f2[20];
+	strcpy( f1, filename );
+	strcat( f1, ".col" );
+	strcpy( f2, filename );
+	strcat( f2, ".gr" );
+
+	file.open( f1 );
+	file2.open( f2 );
 	// (3) print out in DIMACS format
 	file << "c Bi-partite graph" << endl << endl;
 	file << "p edge " << num_vertices( g ) << " " << num_edges( g ) << endl;
+
+	file2 << "p max " << num_vertices( g )+2 << " " << num_edges( g ) + num_vertices( g ) << endl;
+	file2 << "n " << num_vertices( g )+1 << " s" << endl;
+	file2 << "n " << num_vertices( g )+2 << " t" << endl;
+
+	for ( int i = 1; i <= ( num_vertices( g )/2 ); i++ )
+	{
+		file2 << "a " << ( num_vertices( g )+1 ) << " " << i << " 1" << endl;
+	}
 	
 	graph_traits<Graph>::edge_iterator eb, ee;
 	for ( tie( eb, ee ) = edges( g ); eb != ee; eb++ )
 	{
 		file << "e " << source( *eb, g ) + 1 << " " << target( *eb, g ) + 1 << endl;
+		file2 << "a " << source( *eb, g ) + 1 << " " << target( *eb, g ) + 1 << " 1" << endl;
+	}
+
+	for ( int i = ( num_vertices( g )/2 )+1; i <= num_vertices( g ); i++ )
+	{
+		file2 << "a " << i << " " << ( num_vertices( g )+2 ) << " 1" << endl;
 	}
 
 	file.close();
+	file2.close();
 }
